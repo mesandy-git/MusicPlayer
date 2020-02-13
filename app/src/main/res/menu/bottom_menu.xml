@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aandroid="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/library"
+        android:title="Library"
+        android:icon="@mipmap/library"
+        android:enabled="true" />
+    <item
+        android:id="@+id/musics"
+        android:enabled="true"
+        android:icon="@mipmap/music"
+        android:title="Browse" />
+    <item
+        android:id="@+id/search"
+        android:enabled="true"
+        android:icon="@mipmap/search2"
+        android:title="Search" />
+    <item
+        android:id="@+id/setting"
+        android:enabled="true"
+        android:icon="@mipmap/setting"
+        android:title="Setting" />
+</menu>
