@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#F882DA</color>
+    <color name="colorPrimaryDark">#F882DA</color>
+    <color name="colorAccent">#D81B60</color>
+    <color name="colorGrey">#818081</color>
+    <color name="colorBG">#030303</color>
+    <color name="colorIconText">#ffffff</color>
+    <color name="selectedColor">#ffffff</color>
+    <color name="musicButtonInactive">#FFFFFF</color>
+    <color name="musicButtonActive">#030303</color>
+</resources>

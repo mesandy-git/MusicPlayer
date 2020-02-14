@@ -1,0 +1,15 @@
+<resources>
+
+    <style name="AppTheme" parent="Theme.MaterialComponents.NoActionBar">
+        <item name="colorPrimary">#000000</item>
+        <item name="colorPrimaryDark">#000000</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="Widget.MaterialComponents.BottomNavigationView." parent="Widget.Design.BottomNavigationView">
+        <item name="fontFamily">@font/karla_font</item>
+        <item name="fontStyle">normal</item>
+    </style>
+
+
+</resources>
