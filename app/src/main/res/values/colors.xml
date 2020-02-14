@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#F882DA</color>
-    <color name="colorPrimaryDark">#8F116E</color>
+    <color name="colorPrimaryDark">#F882DA</color>
     <color name="colorAccent">#D81B60</color>
     <color name="colorGrey">#818081</color>
+    <color name="colorBG">#ffffff</color>
+    <color name="colorIconText">#F882DA</color>
+    <color name="selectedColor">#F882DA</color>
+    <color name="musicButtonInactive">#0C0C0C</color>
+    <color name="musicButtonActive">#ffffff</color>
+
 </resources>

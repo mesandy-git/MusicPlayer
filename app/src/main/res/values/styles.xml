@@ -1,11 +1,15 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">#F882DA</item>
-        <item name="colorPrimaryDark">#8F116E</item>
+        <item name="colorPrimaryDark">#F882DA</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+
+    <style name="Widget.MaterialComponents.BottomNavigationView." parent="Widget.Design.BottomNavigationView">
+        <item name="fontFamily">@font/karla_font</item>
+        <item name="fontStyle">normal</item>
+    </style>
+
 
 </resources>
