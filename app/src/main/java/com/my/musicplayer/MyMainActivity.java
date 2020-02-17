@@ -2,18 +2,21 @@ package com.my.musicplayer;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import android.annotation.SuppressLint;
+import androidx.fragment.app.Fragment;
+
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import android.content.Context;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -22,10 +25,9 @@ import android.widget.Toast;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
-public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
+public class MyMainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
     private RelativeLayout smallSizeMusicController;
     private ConstraintLayout fullSizeMusicController;
-    private FrameLayout standardBottomSheet;
     private BottomSheetBehavior bottomSheetBehavior;
     private TextView song_name;
     private SeekBar volumeSeekbar = null;
@@ -35,14 +37,15 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         smallSizeMusicController = findViewById(R.id.smallSizeMusicController);
         fullSizeMusicController = findViewById(R.id.fullSizeMusicController);
-        standardBottomSheet = findViewById(R.id.standardBottomSheet);
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
         bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.standardBottomSheet));
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         bottomSheetBehavior.setHideable(false);
+        loadFragment(new LibraryFragment());
         bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
@@ -67,22 +70,31 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
             }
         });
+        Button tvChangeTheme = findViewById(R.id.tvChangeTheme);
+        tvChangeTheme.setOnClickListener(this);
+        //tvChangeTheme.setVisibility(View.GONE);
         initControls();
+
     }
+
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.library:
+                loadFragment(new LibraryFragment());
                 Toast.makeText(this, "Library", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.musics:
+                loadFragment(new MusicFragment());
                 Toast.makeText(this, "Musics", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.search:
+                loadFragment(new SearchFragment());
                 Toast.makeText(this, "Search", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.setting:
+                loadFragment(new SettingFragment());
                 Toast.makeText(this, "Setting", Toast.LENGTH_SHORT).show();
                 break;
         }
@@ -91,8 +103,18 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     @Override
     public void onClick(View v) {
-        // if (v.getId()== R.id.song_name)
-        //bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        switch (v.getId()) {
+            case R.id.tvChangeTheme: {
+                if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                    Log.e("Mode", "if");
+                } else {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                    Log.e("Mode", "else");
+                }
+                MyMainActivity.this.recreate();
+            }
+        }
     }
 
     private void initControls() {
@@ -123,5 +145,15 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void loadFragment(Fragment fragment) {
+//      create a FragmentManager
+        FragmentManager fm = getSupportFragmentManager();
+//      create a FragmentTransaction to begin the transaction and replace the Fragment
+        FragmentTransaction fragmentTransaction = fm.beginTransaction();
+//      replace the FrameLayout with new Fragment
+        fragmentTransaction.replace(R.id.frameLayout, fragment);
+        fragmentTransaction.commit(); // save the changes
     }
 }

@@ -1,15 +1,23 @@
 <resources>
 
-    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">#F882DA</item>
         <item name="colorPrimaryDark">#F882DA</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
     </style>
 
     <style name="Widget.MaterialComponents.BottomNavigationView." parent="Widget.Design.BottomNavigationView">
         <item name="fontFamily">@font/karla_font</item>
         <item name="fontStyle">normal</item>
     </style>
+    <style name="WindowAnimationTransition">
+        <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
+        <item name="android:windowExitAnimation">@android:anim/fade_out</item>
+    </style>
+
+
+
 
 
 </resources>
