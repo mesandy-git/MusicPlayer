@@ -16,13 +16,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
-        <Button
-            android:layout_alignParentBottom="true"
-            android:id="@+id/tvChangeTheme"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Theme"
-            android:visibility="gone"/>
 
     </RelativeLayout>
 

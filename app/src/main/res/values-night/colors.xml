@@ -9,4 +9,6 @@
     <color name="selectedColor">#ffffff</color>
     <color name="musicButtonInactive">#FFFFFF</color>
     <color name="musicButtonActive">#030303</color>
+    <color name="TextColor">#FFFFFF</color>
+
 </resources>

@@ -1,3 +1,5 @@
+package com.my.musicplayer;
+
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
@@ -6,11 +8,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 public class Controller extends Application implements Application.ActivityLifecycleCallbacks {
-
-
+    public Pref pref;
     @Override
     public void onCreate() {
         super.onCreate();
+        pref = new Pref(this);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.my.musicplayer;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -12,40 +13,66 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Context;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
+import java.io.IOException;
+
 public class MyMainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
     private RelativeLayout smallSizeMusicController;
     private ConstraintLayout fullSizeMusicController;
     private BottomSheetBehavior bottomSheetBehavior;
     private TextView song_name;
+    private ImageView playBtnSmallController;
     private SeekBar volumeSeekbar = null;
     private AudioManager audioManager = null;
+    private MediaPlayer mediaPlayer;
+    static Controller controller;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        controller = (Controller) getApplicationContext();
+        loadFragment(new LibraryFragment());
+        bottomSheet();
+        initControls();
+        playBtnSmallController.setOnClickListener(this);
+
+
+    }
+    private void bottomSheet(){
+        try {
+            if (controller.pref.getDARKTHEME())
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            else
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        playBtnSmallController = findViewById(R.id.playBtnSmallController);
         smallSizeMusicController = findViewById(R.id.smallSizeMusicController);
         fullSizeMusicController = findViewById(R.id.fullSizeMusicController);
+
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
         bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.standardBottomSheet));
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         bottomSheetBehavior.setHideable(false);
-        loadFragment(new LibraryFragment());
         bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
@@ -70,11 +97,24 @@ public class MyMainActivity extends AppCompatActivity implements BottomNavigatio
 
             }
         });
-        Button tvChangeTheme = findViewById(R.id.tvChangeTheme);
-        tvChangeTheme.setOnClickListener(this);
-        //tvChangeTheme.setVisibility(View.GONE);
-        initControls();
+    }
 
+    static Controller getController() {
+        return controller;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void playMusic(String AudioURL) {
+        mediaPlayer = new MediaPlayer();
+        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        try {
+            mediaPlayer.setDataSource(AudioURL);
+            mediaPlayer.prepare();
+            Log.e("TymStamp->", "" + mediaPlayer.getDuration());
+            mediaPlayer.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -103,19 +143,24 @@ public class MyMainActivity extends AppCompatActivity implements BottomNavigatio
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.tvChangeTheme: {
-                if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM) {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                    Log.e("Mode", "if");
-                } else {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                    Log.e("Mode", "else");
-                }
-                MyMainActivity.this.recreate();
-            }
-        }
+//        switch (v.getId()) {
+//            case R.id.tvChangeTheme: {
+//                if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM) {
+//                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+//                    Log.e("Mode", "if");
+//                } else {
+//                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+//                    Log.e("Mode", "else");
+//                }
+//                MyMainActivity.this.recreate();
+//            }
+//            case R.id.playBtnSmallController:
+//                String AudioURL = "https://www.android-examples.com/wp-content/uploads/2016/04/Thunder-rumble.mp3";
+//                playMusic(AudioURL);
+//
+//        }
     }
+
 
     private void initControls() {
         try {
@@ -156,4 +201,5 @@ public class MyMainActivity extends AppCompatActivity implements BottomNavigatio
         fragmentTransaction.replace(R.id.frameLayout, fragment);
         fragmentTransaction.commit(); // save the changes
     }
+
 }

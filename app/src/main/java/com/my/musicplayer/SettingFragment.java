@@ -1,14 +1,21 @@
 package com.my.musicplayer;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 
-public class SettingFragment extends Fragment {
+import static android.content.Context.MODE_PRIVATE;
+
+public class SettingFragment extends Fragment implements View.OnClickListener {
+    Context mContext;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -17,16 +24,18 @@ public class SettingFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_setting, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_setting, container, false);
+        setThemes(view);
+        return view;
     }
 
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        mContext = context;
+
     }
 
     @Override
@@ -35,4 +44,29 @@ public class SettingFragment extends Fragment {
 
     }
 
+    @Override
+    public void onClick(View v) {
+
+    }
+
+    private void setThemes(View view) {
+        Switch darkMode = view.findViewById(R.id.darkMode);
+        if (MyMainActivity.getController().pref.getDARKTHEME())
+            darkMode.setChecked(true);
+        else
+            darkMode.setChecked(false);
+        darkMode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                    MyMainActivity.getController().pref.setDARKTHEME(true);
+
+                } else {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                    MyMainActivity.getController().pref.setDARKTHEME(false);
+                    ;
+                }
+            }
+        });
+    }
 }
