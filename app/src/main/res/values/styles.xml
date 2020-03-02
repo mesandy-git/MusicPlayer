@@ -1,8 +1,8 @@
 <resources>
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">#F882DA</item>
-        <item name="colorPrimaryDark">#F882DA</item>
+        <item name="colorPrimary">#FF98E6</item>
+        <item name="colorPrimaryDark">#FF98E6</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
     </style>

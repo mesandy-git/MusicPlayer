@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 public class Pref {
+    private final String DARKTHEME = "dark_theme";
+    private final String selectFragment = "selectFragment";
     private SharedPreferences sharedPreferences;
 
     public SharedPreferences getSharedPreferences() {
@@ -18,19 +20,23 @@ public class Pref {
         this.sharedPreferences = sharedPreferences;
     }
 
-    private final String DARKTHEME = "dark_theme";
 
-    Boolean getDARKTHEME() {
+    Boolean getDarkTheme() {
         return sharedPreferences.getBoolean(DARKTHEME, false);
     }
 
-    void setDARKTHEME(Boolean b) {
+    void setDarkTheme(Boolean b) {
         edit().putBoolean(DARKTHEME, b).commit();
+    }
+    void setSelectFragment(Boolean b) {
+        edit().putBoolean(selectFragment, b).commit();
     }
 
     private SharedPreferences.Editor edit() {
         return sharedPreferences.edit();
     }
 
-
+    public boolean getSelectFragment() {
+        return sharedPreferences.getBoolean(DARKTHEME, false);
+    }
 }

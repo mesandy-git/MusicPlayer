@@ -1,7 +1,6 @@
 package com.my.musicplayer;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,10 +11,9 @@ import android.widget.Switch;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 
-import static android.content.Context.MODE_PRIVATE;
-
 public class SettingFragment extends Fragment implements View.OnClickListener {
     Context mContext;
+    MyMainActivity myMainActivity;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -26,6 +24,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_setting, container, false);
+        MyMainActivity myMainActivity;
         setThemes(view);
         return view;
     }
@@ -48,10 +47,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
 
     }
-
     private void setThemes(View view) {
         Switch darkMode = view.findViewById(R.id.darkMode);
-        if (MyMainActivity.getController().pref.getDARKTHEME())
+        if (MyMainActivity.getController().pref.getDarkTheme())
             darkMode.setChecked(true);
         else
             darkMode.setChecked(false);
@@ -59,14 +57,16 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                    MyMainActivity.getController().pref.setDARKTHEME(true);
+                    MyMainActivity.getController().pref.setDarkTheme(true);
+                    MyMainActivity.bottomNavigationView.setSelectedItemId(R.id.library);
 
                 } else {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                    MyMainActivity.getController().pref.setDARKTHEME(false);
-                    ;
+                    MyMainActivity.getController().pref.setDarkTheme(false);
+                    MyMainActivity.bottomNavigationView.setSelectedItemId(R.id.library);
                 }
             }
         });
     }
+
 }

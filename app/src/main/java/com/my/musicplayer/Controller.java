@@ -3,16 +3,21 @@ package com.my.musicplayer;
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 public class Controller extends Application implements Application.ActivityLifecycleCallbacks {
     public Pref pref;
+    private Player player;
     @Override
     public void onCreate() {
         super.onCreate();
         pref = new Pref(this);
+        Log.e("Controller","Created"+pref.getSelectFragment());
+        //player = new Player(getApplicationContext());
+
     }
 
     @Override

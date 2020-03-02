@@ -10,5 +10,6 @@
     <color name="musicButtonInactive">#0C0C0C</color>
     <color name="musicButtonActive">#ffffff</color>
     <color name="TextColor">#0C0C0C</color>
+    <color name="lightBGColor">#F3F0F0</color>
 
 </resources>

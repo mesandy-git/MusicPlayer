@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorBG"
+    android:background="@color/lightBGColor"
     tools:context=".LibraryFragment">
 
     <androidx.cardview.widget.CardView
@@ -19,7 +19,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/colorBG">
+            android:background="@color/lightBGColor">
 
             <TextView
                 android:layout_width="wrap_content"
