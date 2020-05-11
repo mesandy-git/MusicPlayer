@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/standardBottomSheet"
     style="?attr/bottomSheetStyle"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="10dp"
+    android:layout_marginTop="0dp"
     app:behavior_hideable="false"
-    app:behavior_peekHeight="126dp"
+    app:behavior_peekHeight="116dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
 
@@ -21,18 +20,19 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:background="@android:color/transparent"
-            android:layout_height="60dp">
+            android:layout_height="60dp"
+            android:background="@android:color/transparent">
 
-            <ImageView
-                android:id="@+id/albumIcon"
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/albumArtSmall"
+                app:civ_border_width="0dp"
+                app:civ_border_color="#ffffff"
                 android:layout_width="45dp"
                 android:layout_height="45dp"
-                android:layout_gravity="center|left"
+                android:layout_gravity="center|start"
                 android:layout_marginStart="16dp"
-                android:padding="5dp"
-                android:elevation="0dp"
                 android:background="@drawable/img_res"
+                android:elevation="0dp"
                 android:src="@mipmap/music_pic"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -45,39 +45,27 @@
                 android:layout_gravity="center"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
+                android:fontFamily="@font/karla_font"
+                android:maxLines="1"
                 android:text="Not Playing"
-                android:textSize="18sp"
+                android:textSize="15sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/playBtnSmallController"
-                app:layout_constraintStart_toEndOf="@+id/albumIcon"
+                app:layout_constraintStart_toEndOf="@+id/albumArtSmall"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
-                android:id="@+id/forword"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:layout_marginEnd="16dp"
-                android:backgroundTint="@color/colorGrey"
+                android:id="@+id/playBtnSmallController"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:layout_gravity="end|center"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="@string/todo"
                 android:padding="5dp"
                 android:scaleType="fitXY"
-                android:tint="@color/colorGrey"
-                android:src="@drawable/ic_fast_forward_black_24dp"
+                android:src="@drawable/ic_play_circle_filled_black_24dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.50" />
-
-            <ImageView
-                android:id="@+id/playBtnSmallController"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:layout_gravity="end|center"
-                android:padding="5dp"
-                android:scaleType="fitXY"
-                android:tint="@color/musicButtonInactive"
-                android:src="@drawable/ic_play_arrow_black_24dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/forword"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toEndOf="@+id/song_name"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -119,12 +107,14 @@
             app:layout_constraintVertical_bias="0.0" />
 
         <ImageView
-            android:id="@+id/imageView"
+            android:id="@+id/albumArtLarge"
             android:layout_width="250dp"
             android:layout_height="225dp"
             android:layout_marginTop="32dp"
-            android:background="@drawable/music_background"
+            android:background="@android:color/transparent"
             android:elevation="10dp"
+            android:scaleType="centerInside"
+            android:contentDescription="@string/todo"
             app:layout_constraintBottom_toTopOf="@+id/textView2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.50"
@@ -146,7 +136,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView" />
+            app:layout_constraintTop_toBottomOf="@+id/albumArtLarge" />
 
         <SeekBar
             android:id="@+id/timerBar"
@@ -229,13 +219,16 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/lay" />
 
-        <RelativeLayout
+        <LinearLayout
             android:id="@+id/lay"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="52dp"
             android:layout_marginStart="64dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="64dp"
+            android:weightSum="1"
+            android:gravity="center"
+            android:orientation="horizontal"
             app:layout_constraintBottom_toTopOf="@+id/volumeBar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -245,39 +238,34 @@
                 android:id="@+id/imageView2"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
                 android:padding="6dp"
-                android:tint="@color/colorGrey"
-                app:layout_constraintEnd_toStartOf="@+id/imageView3"
-                app:srcCompat="@drawable/ic_fast_rewind_black_24dp" />
+                android:layout_gravity="center_horizontal|left"
+                android:src="@drawable/ic_fast_rewind_black_24dp"
+                android:tint="@color/colorGrey" />
 
             <ImageView
-                android:id="@+id/imageView3"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_centerInParent="true"
-                android:layout_marginStart="32dp"
-                android:layout_marginLeft="32dp"
+                android:id="@+id/playBtnLargeController"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="24dp"
+                android:layout_marginLeft="24dp"
                 android:layout_marginEnd="32dp"
                 android:layout_marginRight="32dp"
+                android:contentDescription="@string/todo"
                 android:padding="5dp"
-                android:tint="@color/musicButtonInactive"
-                app:layout_constraintEnd_toStartOf="@+id/imageView4"
-                app:layout_constraintStart_toEndOf="@+id/imageView2"
-                app:srcCompat="@drawable/ic_play_arrow_black_24dp"
-                tools:layout_editor_absoluteX="248dp" />
+                android:src="@drawable/ic_play_circle_filled_black_24dp" />
 
             <ImageView
                 android:id="@+id/imageView4"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
                 android:padding="6dp"
-                android:tint="@color/colorGrey"
-                app:srcCompat="@drawable/ic_fast_forward_black_24dp" />
-        </RelativeLayout>
+                android:contentDescription="@string/todo"
+                android:layout_gravity="center_horizontal|right"
+                android:src="@drawable/ic_fast_forward_black_24dp"
+                android:tint="@color/colorGrey" />
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

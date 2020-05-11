@@ -26,22 +26,6 @@ public class Player implements MediaPlayer.OnCompletionListener, MediaPlayer.OnP
     }
 
 
-    void playMusic(String AudioURL) {
-        player = new MediaPlayer();
-        player.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        try {
-            player.setDataSource(AudioURL);
-            player.prepare();
-            //Log.e("TymStamp->", "Length: " + player.getTrackInfo().length + " Duration:" + player.getDuration());
-            //playBtnSmallController.setImageResource(R.drawable.ic_pause_black_24dp);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.e("TymStamp->", "" + e.toString());
-            //playBtnSmallController.setImageResource(R.drawable.ic_play_arrow_black_24dp);
-        }
-    }
-
     private void setTimeDuration() {
         if (player != null) {
             player.start();
@@ -75,6 +59,22 @@ public class Player implements MediaPlayer.OnCompletionListener, MediaPlayer.OnP
             }, 0, 1000);
         }
 
+    }
+
+    void playMusic(String AudioURL) {
+        player = new MediaPlayer();
+        player.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        try {
+            player.setDataSource(AudioURL);
+            player.prepare();
+            //Log.e("TymStamp->", "Length: " + player.getTrackInfo().length + " Duration:" + player.getDuration());
+            //playBtnSmallController.setImageResource(R.drawable.ic_pause_black_24dp);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e("TymStamp->", "" + e.toString());
+            //playBtnSmallController.setImageResource(R.drawable.ic_play_arrow_black_24dp);
+        }
     }
 
     @Override

@@ -7,6 +7,8 @@ public class Pref {
     private final String DARKTHEME = "dark_theme";
     private final String selectFragment = "selectFragment";
     private SharedPreferences sharedPreferences;
+    private final String lastMusicPath = "lastMusic";
+    private final String lastMusicName = "lastMusicName";
 
     public SharedPreferences getSharedPreferences() {
         return sharedPreferences;
@@ -20,14 +22,30 @@ public class Pref {
         this.sharedPreferences = sharedPreferences;
     }
 
-
-    Boolean getDarkTheme() {
+    public Boolean getDarkTheme() {
         return sharedPreferences.getBoolean(DARKTHEME, false);
     }
 
-    void setDarkTheme(Boolean b) {
+    public String getLastMusicPath() {
+        return sharedPreferences.getString(lastMusicPath, "");
+    }
+
+    public void setLastMusicPath(String str) {
+        edit().putString(lastMusicPath, str).commit();
+    }
+
+    public String getLastMusicName() {
+        return sharedPreferences.getString(lastMusicName, "Not Playing");
+    }
+
+    public void setLastMusicName(String str) {
+        edit().putString(lastMusicName, str).commit();
+    }
+
+    public void setDarkTheme(Boolean b) {
         edit().putBoolean(DARKTHEME, b).commit();
     }
+
     void setSelectFragment(Boolean b) {
         edit().putBoolean(selectFragment, b).commit();
     }
@@ -36,7 +54,7 @@ public class Pref {
         return sharedPreferences.edit();
     }
 
-    public boolean getSelectFragment() {
+    boolean getSelectFragment() {
         return sharedPreferences.getBoolean(DARKTHEME, false);
     }
 }

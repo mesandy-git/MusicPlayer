@@ -1,14 +1,17 @@
-package com.my.musicplayer;
+package com.my.musicplayer.Fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+
+import androidx.fragment.app.Fragment;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.fragment.app.Fragment;
+import com.my.musicplayer.R;
 
-public class MusicFragment extends Fragment {
+public class LibraryFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -20,7 +23,7 @@ public class MusicFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_music, container, false);
+        return inflater.inflate(R.layout.fragment_library, container, false);
     }
 
 

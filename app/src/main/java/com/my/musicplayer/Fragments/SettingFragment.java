@@ -1,4 +1,4 @@
-package com.my.musicplayer;
+package com.my.musicplayer.Fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -10,6 +10,9 @@ import android.widget.Switch;
 
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
+
+import com.my.musicplayer.MyMainActivity;
+import com.my.musicplayer.R;
 
 public class SettingFragment extends Fragment implements View.OnClickListener {
     Context mContext;

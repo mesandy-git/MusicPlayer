@@ -1,64 +1,92 @@
 package com.my.musicplayer;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.constraintlayout.widget.ConstraintLayout;
-
-import androidx.fragment.app.Fragment;
-
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.media.AudioManager;
-import android.media.MediaPlayer;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.my.musicplayer.Fragments.LibraryFragment;
+import com.my.musicplayer.Fragments.MusicFragment;
+import com.my.musicplayer.Fragments.SearchFragment;
+import com.my.musicplayer.Fragments.SettingFragment;
 
-import java.io.IOException;
+import static com.my.musicplayer.Controller.flag;
+import static com.my.musicplayer.Controller.mediaPlayer;
+import static com.my.musicplayer.Controller.musicPauseCallBack;
+import static com.my.musicplayer.Controller.musicPlayCallBack;
 
 public class MyMainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
     private RelativeLayout smallSizeMusicController;
     private ConstraintLayout fullSizeMusicController;
     private BottomSheetBehavior bottomSheetBehavior;
-    private TextView song_name;
+    static TextView songName;
+    private int MY_PERMISSIONS_WRITE_EXTERNAL_STORAGE = 2000;
     public static TextView startTime, endTime;
-    private ImageView playBtnSmallController;
+    private static ImageView playBtnSmallController;
+    static ImageView albumArtSmall, albumArtLarge;
+    private static ImageView playBtnLargeController;
     private SeekBar volumeSeekbar = null;
+    public static SeekBar timerBar = null;
     private AudioManager audioManager = null;
-    private MediaPlayer mediaPlayer;
     static Controller controller;
-    static BottomNavigationView bottomNavigationView;
-    private Player player;
+    public static BottomNavigationView bottomNavigationView;
+    private String isPlay;
+    private String itemName;
+    private static Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getPermissions();
+        controller = (Controller) getApplicationContext();
+        activity = MyMainActivity.this;
         startTime = findViewById(R.id.startTime);
         endTime = findViewById(R.id.endTime);
-        controller = (Controller) getApplicationContext();
+        songName = findViewById(R.id.song_name);
         setDarkTheme();
         bottomSheet();
         loadFragment(new LibraryFragment());
+        itemName = "library";
         initControls();
-        playBtnSmallController.setOnClickListener(this);
-        player = new Player(getApplicationContext(), this);
+        seekController();
+        playBtnSmallController.setOnClickListener(v -> {
+            if (mediaPlayer.isPlaying()) {
+                musicPauseCallBack();
+
+            } else if (!mediaPlayer.isPlaying() && flag) {
+                musicPlayCallBack();
+            } else {
+                controller.setLastTrackName(controller.pref.getLastMusicName());
+                controller.playAudio(controller.pref.getLastMusicPath());
+            }
+        });
+        playBtnLargeController.setOnClickListener(v -> playBtnSmallController.performClick());
     }
+
 
     void setDarkTheme() {
         try {
@@ -73,12 +101,13 @@ public class MyMainActivity extends AppCompatActivity implements BottomNavigatio
 
     private void bottomSheet() {
         playBtnSmallController = findViewById(R.id.playBtnSmallController);
+        playBtnLargeController = findViewById(R.id.playBtnLargeController);
+        albumArtLarge = findViewById(R.id.albumArtLarge);
+        albumArtSmall = findViewById(R.id.albumArtSmall);
         smallSizeMusicController = findViewById(R.id.smallSizeMusicController);
         fullSizeMusicController = findViewById(R.id.fullSizeMusicController);
-
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
-
         bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.standardBottomSheet));
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         bottomSheetBehavior.setHideable(false);
@@ -87,46 +116,41 @@ public class MyMainActivity extends AppCompatActivity implements BottomNavigatio
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 if (newState == BottomSheetBehavior.STATE_EXPANDED) {
                     smallSizeMusicController.setVisibility(View.GONE);
-                    fullSizeMusicController.setBackgroundResource(R.drawable.bottom_sheet_corner);
+//                    fullSizeMusicController.setBackgroundResource(R.drawable.bottom_sheet_corner);
                 } else if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
                     smallSizeMusicController.setVisibility(View.VISIBLE);
                     fullSizeMusicController.setVisibility(View.GONE);
                 } else if (newState == BottomSheetBehavior.STATE_DRAGGING) {
                     fullSizeMusicController.setVisibility(View.VISIBLE);
-                    fullSizeMusicController.setBackgroundResource(R.drawable.bottom_sheet_corner);
+//                    fullSizeMusicController.setBackgroundResource(R.drawable.bottom_sheet_corner);
                 }
             }
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                //bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
 
             }
         });
     }
 
-    static Controller getController() {
+    public static Controller getController() {
         return controller;
     }
 
-    //@RequiresApi(api = Build.VERSION_CODES.M)
-    private void playMusics(String AudioURL) {
+    public static Activity getAct() {
+        return activity;
+    }
 
-        mediaPlayer = new MediaPlayer();
-        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        try {
-            mediaPlayer.setDataSource(AudioURL);
-            mediaPlayer.prepare();
-            Log.e("TymStamp->", "Length: " + mediaPlayer.getTrackInfo().length + " Duration:" + mediaPlayer.getDuration());
+    static void playMusics() {
+        playBtnSmallController.setImageResource(R.drawable.ic_pause_circle_filled_black_24dp);
+        playBtnLargeController.setImageResource(R.drawable.ic_pause_circle_filled_black_24dp);
 
-            playBtnSmallController.setImageResource(R.drawable.ic_pause_black_24dp);
-            mediaPlayer.start();
+    }
 
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.e("TymStamp->",""+e.toString());
-            playBtnSmallController.setImageResource(R.drawable.ic_play_arrow_black_24dp);
-        }
+    static void pauseMusics() {
+        playBtnSmallController.setImageResource(R.drawable.ic_play_circle_filled_black_24dp);
+        playBtnLargeController.setImageResource(R.drawable.ic_play_circle_filled_black_24dp);
     }
 
 
@@ -134,35 +158,34 @@ public class MyMainActivity extends AppCompatActivity implements BottomNavigatio
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.library:
-                loadFragment(new LibraryFragment());
-                //Toast.makeText(this, "Library", Toast.LENGTH_SHORT).show();
+                if (!itemName.equalsIgnoreCase("library")) {
+                    loadFragment(new LibraryFragment());
+                    itemName = "library";
+                }
                 break;
             case R.id.musics:
-                loadFragment(new MusicFragment());
-                //Toast.makeText(this, "Musics", Toast.LENGTH_SHORT).show();
+                if (!itemName.equalsIgnoreCase("music")) {
+                    loadFragment(new MusicFragment());
+                    itemName = "music";
+                }
                 break;
             case R.id.search:
-                loadFragment(new SearchFragment());
-                //Toast.makeText(this, "Search", Toast.LENGTH_SHORT).show();
+                if (!itemName.equalsIgnoreCase("search")) {
+                    loadFragment(new SearchFragment());
+                    itemName = "search";
+                }
                 break;
+
             case R.id.setting:
-                loadFragment(new SettingFragment());
-                //Toast.makeText(this, "Setting", Toast.LENGTH_SHORT).show();
+                if (!itemName.equalsIgnoreCase("setting")) {
+                    itemName = "setting";
+                    loadFragment(new SettingFragment());
+                }
                 break;
         }
         return true;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    @Override
-    public void onClick(View v) {
-        if (v.getId() == R.id.playBtnSmallController) {
-            String AudioURL = "https://www.android-examples.com/wp-content/uploads/2016/04/Thunder-rumble.mp3";
-            //playMusic(AudioURL);
-            //playBtnSmallController.setImageResource(R.drawable.ic_play_arrow_black_24dp);
-            player.playMusic(AudioURL);
-        }
-    }
 
     @Override
     protected void onDestroy() {
@@ -214,11 +237,127 @@ public class MyMainActivity extends AppCompatActivity implements BottomNavigatio
         }
     }
 
-    public void loadFragment(Fragment fragment) {
-        FragmentManager fm = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fm.beginTransaction();
-        fragmentTransaction.replace(R.id.frameLayout, fragment);
-        fragmentTransaction.commit();
+    private void seekController() {
+        timerBar = findViewById(R.id.timerBar);
+        timerBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+//              startTime.setText(progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                controller.removeCallBack();
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                controller.removeCallBack();
+                mediaPlayer.seekTo(seekBar.getProgress());
+                controller.updateProgressBar();
+            }
+        });
+
     }
 
+//    public void loadFragment(Fragment fragment) {
+//        FragmentManager fragmentManager = getSupportFragmentManager();
+//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//        fragmentTransaction.replace(R.id.frameLayout, fragment);
+//        fragmentTransaction.addToBackStack(fragment.toString());
+//        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+//        fragmentTransaction.commit();
+//    }
+
+    public void loadFragment(Fragment fragment) {
+        String tagFragmentName = fragment.getClass().getName();
+        FragmentManager mFragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+
+        Fragment currentFragment = mFragmentManager.getPrimaryNavigationFragment();
+        if (currentFragment != null) {
+            fragmentTransaction.hide(currentFragment);
+        }
+
+        Fragment fragmentTemp = mFragmentManager.findFragmentByTag(tagFragmentName);
+        if (fragmentTemp == null) {
+            fragmentTemp = fragment;
+            fragmentTransaction.add(R.id.frameLayout, fragmentTemp, tagFragmentName);
+        } else {
+            fragmentTransaction.show(fragmentTemp);
+        }
+
+        fragmentTransaction.setPrimaryNavigationFragment(fragmentTemp);
+        fragmentTransaction.setReorderingAllowed(true);
+        fragmentTransaction.commitNowAllowingStateLoss();
+    }
+
+    private void getPermissions() {
+        controller = (Controller) getApplicationContext();
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    MY_PERMISSIONS_WRITE_EXTERNAL_STORAGE);
+        } else {
+            // Permission has already been granted
+            controller.runMusicRefresh();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == MY_PERMISSIONS_WRITE_EXTERNAL_STORAGE && grantResults.length != 0) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                controller.runMusicRefresh();
+
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        songName.setText(controller.pref.getLastMusicName());
+        if (mediaPlayer != null) {
+            if (mediaPlayer.isPlaying()) {
+                playMusics();
+            } else {
+                isPlay = "no";
+                pauseMusics();
+            }
+        }
+    }
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        volumeSeekbar = findViewById(R.id.volumeBar);
+        volumeSeekbar.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
+        int action = event.getAction();
+        int keyCode = event.getKeyCode();
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_VOLUME_UP:
+                if (action == KeyEvent.ACTION_DOWN) {
+                    audioManager.adjustVolume(AudioManager.ADJUST_RAISE, AudioManager.FLAG_PLAY_SOUND);
+                }
+                audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                volumeSeekbar.setProgress(audioManager.getStreamVolume(AudioManager.STREAM_MUSIC));
+                return true;
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                if (action == KeyEvent.ACTION_DOWN) {
+                    audioManager.adjustVolume(AudioManager.ADJUST_LOWER, AudioManager.FLAG_PLAY_SOUND);
+                }
+                audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                volumeSeekbar.setProgress(audioManager.getStreamVolume(AudioManager.STREAM_MUSIC));
+                return true;
+            default:
+                return super.dispatchKeyEvent(event);
+        }
+    }
 }
