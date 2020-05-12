@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static androidx.constraintlayout.widget.Constraints.TAG;
+import static com.my.musicplayer.MyMainActivity.controller;
 import static com.my.musicplayer.MyMainActivity.getController;
 
 public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.ViewHolder> {
@@ -47,11 +48,14 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
     public void onBindViewHolder(ViewHolder holder, int position) {
         final AudioModel audioModel = listData.get(position);
         holder.textView.setText(audioModel.getaName());
+        holder.albumName.setText(audioModel.getaAlbum());
         getAudioAlbumImageContentUri(audioModel.getaPath(), holder.imageView);
         holder.relativeLayout.setOnClickListener(view -> {
             getController().setLastTrackName(audioModel.getaName());
+            getController().pref.setTrackPosition(position);
             getController().playAudio(audioModel.getaPath());
-                });
+            Log.d("Position", "" + position + " " + audioModel.getaName());
+        });
 //                Toast.makeText(view.getContext(), "click on item: " + audioModel.getaPath(), Toast.LENGTH_LONG).show());
     }
 
@@ -88,14 +92,15 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         CircleImageView imageView;
-        TextView textView;
+        TextView textView, albumName;
         RelativeLayout relativeLayout;
 
         ViewHolder(View itemView) {
             super(itemView);
             this.imageView = itemView.findViewById(R.id.songImage);
             this.textView = itemView.findViewById(R.id.songName);
-            relativeLayout = itemView.findViewById(R.id.relativeLayout);
+            this.albumName = itemView.findViewById(R.id.albumName);
+            this.relativeLayout = itemView.findViewById(R.id.relativeLayout);
         }
     }
 }

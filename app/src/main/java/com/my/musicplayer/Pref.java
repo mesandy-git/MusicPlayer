@@ -17,6 +17,13 @@ public class Pref {
     Pref(Context context) {
         sharedPreferences = context.getSharedPreferences("Musics", Context.MODE_PRIVATE);
     }
+    int getTrackPosition() {
+        return sharedPreferences.getInt("track_pos", 0);
+    }
+
+    public void setTrackPosition(int trackPosition) {
+        edit().putInt("track_pos", trackPosition).commit();
+    }
 
     public void setSharedPreferences(SharedPreferences sharedPreferences) {
         this.sharedPreferences = sharedPreferences;
@@ -26,19 +33,19 @@ public class Pref {
         return sharedPreferences.getBoolean(DARKTHEME, false);
     }
 
-    public String getLastMusicPath() {
+    String getLastMusicPath() {
         return sharedPreferences.getString(lastMusicPath, "");
     }
 
-    public void setLastMusicPath(String str) {
+    void setLastMusicPath(String str) {
         edit().putString(lastMusicPath, str).commit();
     }
 
-    public String getLastMusicName() {
+    String getLastMusicName() {
         return sharedPreferences.getString(lastMusicName, "Not Playing");
     }
 
-    public void setLastMusicName(String str) {
+    void setLastMusicName(String str) {
         edit().putString(lastMusicName, str).commit();
     }
 

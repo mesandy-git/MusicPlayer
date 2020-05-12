@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#F882DA</color>
+    <color name="colorPrimary">#D581BF</color>
     <color name="colorPrimaryDark">#F882DA</color>
     <color name="colorAccent">#D81B60</color>
     <color name="colorGrey">#818081</color>
     <color name="colorBG">#030303</color>
     <color name="colorIconText">#ffffff</color>
     <color name="selectedColor">#ffffff</color>
-    <color name="musicButtonInactive">#FFFFFF</color>
+    <color name="musicButtonInactive">#AFABAB</color>
     <color name="musicButtonActive">#030303</color>
     <color name="TextColor">#FFFFFF</color>
-    <color name="lightBGColor">#0E0E0E</color>
+    <color name="TextColorLight">#BFBBBB</color>
+    <color name="lightBGColor">#121212</color>
+    <color name="lightBGColor2">#1F1B24</color>
 
 </resources>

@@ -3,6 +3,7 @@ package com.my.musicplayer;
 import android.app.Activity;
 import android.app.Application;
 import android.app.Application.ActivityLifecycleCallbacks;
+import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -19,20 +20,21 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
+import android.os.IBinder;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import com.google.gson.Gson;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 import static com.my.musicplayer.MyMainActivity.albumArtLarge;
 import static com.my.musicplayer.MyMainActivity.albumArtSmall;
@@ -42,15 +44,18 @@ import static com.my.musicplayer.MyMainActivity.getController;
 import static com.my.musicplayer.MyMainActivity.pauseMusics;
 import static com.my.musicplayer.MyMainActivity.playMusics;
 import static com.my.musicplayer.MyMainActivity.songName;
+import static com.my.musicplayer.MyMainActivity.songNameLarge;
 import static com.my.musicplayer.MyMainActivity.startTime;
 import static com.my.musicplayer.MyMainActivity.timerBar;
 
-public class Controller extends Application implements ActivityLifecycleCallbacks, MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener, AudioManager.OnAudioFocusChangeListener {
+public class Controller extends Application implements ActivityLifecycleCallbacks,
+        MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener, AudioManager.OnAudioFocusChangeListener {
     public Pref pref;
     public static MediaPlayer mediaPlayer;
     public static boolean flag = false;
     String lastTrackName = "Not Playing";
     static Handler mHandler;
+    public ArrayList<AudioModel> tempAudioList;
     private AudioManager mAudioManager;
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
@@ -60,11 +65,12 @@ public class Controller extends Application implements ActivityLifecycleCallback
             if (Intent.ACTION_HEADSET_PLUG.equals(action)) {
                 iii = intent.getIntExtra("state", -1);
                 if (Integer.valueOf(iii) == 0) {
-                    Log.d(controller.getPackageName(), "microphone not plugged");
+                    Log.d(BuildConfig.APPLICATION_ID, "microphone not plugged");
                     musicPauseCallBack();
                 }
                 if (Integer.valueOf(iii) == 1) {
-                    Log.d(controller.getPackageName(), "microphone plugged in");
+                    Log.d(BuildConfig.APPLICATION_ID, "microphone plugged");
+
                 }
             }
         }
@@ -101,21 +107,33 @@ public class Controller extends Application implements ActivityLifecycleCallback
     @Override
     public void onCreate() {
         super.onCreate();
+        setDarkTheme();
         mediaPlayer = new MediaPlayer();
-        pref = new Pref(this);
+        tempAudioList = new ArrayList<>();
         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         mediaPlayer.setOnPreparedListener(this);
+        mediaPlayer.setOnCompletionListener(this);
         Log.e("Controller", "Created" + pref.getSelectFragment());
         IntentFilter receiverFilter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
         registerReceiver(mReceiver, receiverFilter);
         mHandler = new Handler();
     }
 
+    void setDarkTheme() {
+        pref = new Pref(this);
+        try {
+            if (pref.getDarkTheme())
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            else
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     void runMusicRefresh() {
         Handler handler = new Handler();
-        String MEDIA_PATH = Environment.getExternalStorageDirectory() + "";
-        Runnable r = () -> setMusicList(getAllAudioFromDevice(this));
-//        Runnable r = () -> setMusicList(getPlayList(MEDIA_PATH));
+        Runnable r = () -> getAllAudioFromDevice();
         handler.postDelayed(r, 100);
     }
 
@@ -141,6 +159,7 @@ public class Controller extends Application implements ActivityLifecycleCallback
                     mediaPlayer.setDataSource(path);
                     mediaPlayer.prepare();
                     songName.setText(getLastTrackName());
+                    songNameLarge.setText(getLastTrackName());
                     pref.setLastMusicPath(path);
                     setAlbumArt(path);
                 }
@@ -152,11 +171,10 @@ public class Controller extends Application implements ActivityLifecycleCallback
     }
 
     private void setAlbumArt(String path) {
-        android.media.MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+        MediaMetadataRetriever mmr = new MediaMetadataRetriever();
         mmr.setDataSource(path);
-        byte [] data = mmr.getEmbeddedPicture();
-        if(data != null)
-        {
+        byte[] data = mmr.getEmbeddedPicture();
+        if (data != null) {
             Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
             albumArtSmall.setImageBitmap(bitmap);
             albumArtLarge.setImageBitmap(bitmap);
@@ -281,34 +299,33 @@ public class Controller extends Application implements ActivityLifecycleCallback
             return null;
         }
     }
-    public ArrayList<AudioModel> getAllAudioFromDevice(final Context context) {
-        final ArrayList<AudioModel> tempAudioList = new ArrayList<>();
 
+    public void getAllAudioFromDevice() {
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        String[] projection = {MediaStore.Audio.AudioColumns.DATA, MediaStore.Audio.AudioColumns.TITLE, MediaStore.Audio.AudioColumns.ALBUM, MediaStore.Audio.ArtistColumns.ARTIST,};
-        Cursor c = getContentResolver().query(uri, projection, null ,null, null);
+        String[] projection = {MediaStore.Audio.AudioColumns.DATA, MediaStore.Audio.AudioColumns.TITLE,
+                MediaStore.Audio.AudioColumns.ALBUM, MediaStore.Audio.ArtistColumns.ARTIST,};
+        Cursor c = getContentResolver().query(uri, projection, null, null, null);
         if (c != null) {
             while (c.moveToNext()) {
                 AudioModel audioModel = new AudioModel();
                 String path = c.getString(0);
                 String name = c.getString(1);
                 String album = c.getString(2);
-                String artist = c.getString(3);
-
+                // String artist = c.getString(3);
                 audioModel.setaName(name);
                 audioModel.setaAlbum(album);
-                audioModel.setaArtist(artist);
+//                audioModel.setaArtist(artist);
                 audioModel.setaPath(path);
-
-                Log.e("Name :" + name, " Album :" + album);
-                Log.e("Path :" + path, " Artist :" + artist);
-
+//                Log.e("Name :" + name, " Album :" + album);
+//                Log.e("Path :" + path, " Artist :" + artist);
                 tempAudioList.add(audioModel);
             }
             c.close();
         }
-
-        return tempAudioList;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            tempAudioList.sort((s1, s2) -> s1.getaName().compareTo(s2.getaName()));
+        }
+        Log.d("ListCreate", "List Created");
     }
 
 
@@ -334,9 +351,35 @@ public class Controller extends Application implements ActivityLifecycleCallback
         try {
             mediaPlayer.reset();
             controller.removeCallBack();
+            nextTrack();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+    void nextTrack() {
+        if (tempAudioList.size() > 0) {
+            int pos = tempAudioList.size() - 1 == pref.getTrackPosition() ? 0 : pref.getTrackPosition() + 1;
+            String path = tempAudioList.get(pos).getaPath();
+            setLastTrackName(tempAudioList.get(pos).getaName());
+            pref.setTrackPosition(pos);
+            playAudio(path);
+            Log.d("Position", "" + pos + " " + tempAudioList.get(pos).getaName());
+        }
+    }
+
+    void previousTrack() {
+        if (tempAudioList.size() > 0) {
+            int pos = pref.getTrackPosition() == 0 ? tempAudioList.size() - 1 : pref.getTrackPosition() - 1;
+            String path = tempAudioList.get(pos).getaPath();
+            setLastTrackName(tempAudioList.get(pos).getaName());
+            pref.setTrackPosition(pos);
+            playAudio(path);
+            Log.d("Position", "" + pos + " " + tempAudioList.get(pos).getaName());
+        }
+    }
+
+
+
 }
 

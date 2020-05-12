@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -42,7 +43,7 @@ public class MyMainActivity extends AppCompatActivity implements BottomNavigatio
     private RelativeLayout smallSizeMusicController;
     private ConstraintLayout fullSizeMusicController;
     private BottomSheetBehavior bottomSheetBehavior;
-    static TextView songName;
+    static TextView songName, songNameLarge;
     private int MY_PERMISSIONS_WRITE_EXTERNAL_STORAGE = 2000;
     public static TextView startTime, endTime;
     private static ImageView playBtnSmallController;
@@ -51,23 +52,26 @@ public class MyMainActivity extends AppCompatActivity implements BottomNavigatio
     private SeekBar volumeSeekbar = null;
     public static SeekBar timerBar = null;
     private AudioManager audioManager = null;
-    static Controller controller;
+    public static Controller controller;
     public static BottomNavigationView bottomNavigationView;
     private String isPlay;
     private String itemName;
     private static Activity activity;
+    private ImageView previousLarge, nextLarge;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getPermissions();
         controller = (Controller) getApplicationContext();
         activity = MyMainActivity.this;
         startTime = findViewById(R.id.startTime);
         endTime = findViewById(R.id.endTime);
         songName = findViewById(R.id.song_name);
-        setDarkTheme();
+        songNameLarge = findViewById(R.id.songNameLarge);
+        previousLarge = findViewById(R.id.previousLarge);
+        nextLarge = findViewById(R.id.nextLarge);
+        //setDarkTheme();
         bottomSheet();
         loadFragment(new LibraryFragment());
         itemName = "library";
@@ -85,19 +89,16 @@ public class MyMainActivity extends AppCompatActivity implements BottomNavigatio
             }
         });
         playBtnLargeController.setOnClickListener(v -> playBtnSmallController.performClick());
+        nextLarge.setOnClickListener(v -> {
+            controller.nextTrack();
+        });
+        previousLarge.setOnClickListener(v -> {
+            controller.previousTrack();
+        });
+        new Handler().postDelayed(this::getPermissions,0);
     }
 
 
-    void setDarkTheme() {
-        try {
-            if (controller.pref.getDarkTheme())
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-            else
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     private void bottomSheet() {
         playBtnSmallController = findViewById(R.id.playBtnSmallController);
@@ -156,6 +157,9 @@ public class MyMainActivity extends AppCompatActivity implements BottomNavigatio
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        }
         switch (item.getItemId()) {
             case R.id.library:
                 if (!itemName.equalsIgnoreCase("library")) {
@@ -301,7 +305,6 @@ public class MyMainActivity extends AppCompatActivity implements BottomNavigatio
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     MY_PERMISSIONS_WRITE_EXTERNAL_STORAGE);
         } else {
-            // Permission has already been granted
             controller.runMusicRefresh();
         }
     }
@@ -326,6 +329,7 @@ public class MyMainActivity extends AppCompatActivity implements BottomNavigatio
     protected void onResume() {
         super.onResume();
         songName.setText(controller.pref.getLastMusicName());
+        songNameLarge.setText(controller.pref.getLastMusicName());
         if (mediaPlayer != null) {
             if (mediaPlayer.isPlaying()) {
                 playMusics();
@@ -335,6 +339,7 @@ public class MyMainActivity extends AppCompatActivity implements BottomNavigatio
             }
         }
     }
+
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         volumeSeekbar = findViewById(R.id.volumeBar);

@@ -37,7 +37,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:background="@color/colorBG"
+            android:background="@color/lightBGColor"
             android:theme="@style/Widget.MaterialComponents.BottomNavigationView."
             app:itemIconTint="@drawable/bottom_nev_color"
             app:itemTextColor="@drawable/bottom_nev_color"

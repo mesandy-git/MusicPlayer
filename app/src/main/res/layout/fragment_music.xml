@@ -1,19 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:scrollbars="vertical"
     android:background="@color/lightBGColor"
+    app:fastScrollEnabled="true"
     tools:context=".Fragments.LibraryFragment">
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
+        android:layout_marginTop="45dp"
+        android:background="@android:color/transparent"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbars="vertical"
-        app:layout_constraintTop_toBottomOf="@+id/cardView">
+        android:layout_height="wrap_content" />
 
-    </androidx.recyclerview.widget.RecyclerView>
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginTop="0dp"
+        android:background="@color/lightBGColor"
+        android:orientation="horizontal">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.cardview.widget.CardView
+            android:id="@+id/playAllView"
+            android:layout_width="0dp"
+            android:background="@drawable/click_adapter"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="2dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="4dp"
+            android:layout_weight="0.5">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:drawableStart="@drawable/ic_play_arrow_black_24dp"
+                    android:drawablePadding="4dp"
+                    android:drawableTint="@color/musicButtonInactive"
+                    android:fontFamily="@font/karla_font"
+                    android:gravity="center"
+                    android:text="Play All"
+                    android:textColor="@color/TextColor"
+                    android:textSize="14dp" />
+            </RelativeLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/shuffleView"
+            android:layout_width="0dp"
+            android:background="@drawable/click_adapter"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="2dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="16dp"
+            android:layout_weight="0.5">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:drawableStart="@drawable/ic_shuffle_black_24dp"
+                    android:drawablePadding="4dp"
+                    android:drawableTint="@color/musicButtonInactive"
+                    android:fontFamily="@font/karla_font"
+                    android:gravity="center"
+                    android:text="Shuffle"
+                    android:textColor="@color/TextColor"
+                    android:textSize="14dp" />
+            </RelativeLayout>
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+</RelativeLayout>

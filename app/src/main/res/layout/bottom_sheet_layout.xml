@@ -10,12 +10,11 @@
     app:behavior_peekHeight="116dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
-
     <RelativeLayout
         android:id="@+id/smallSizeMusicController"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:background="@color/colorBG"
+        android:background="@color/lightBGColor2"
         android:visibility="visible">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -25,8 +24,6 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/albumArtSmall"
-                app:civ_border_width="0dp"
-                app:civ_border_color="#ffffff"
                 android:layout_width="45dp"
                 android:layout_height="45dp"
                 android:layout_gravity="center|start"
@@ -34,6 +31,8 @@
                 android:background="@drawable/img_res"
                 android:elevation="0dp"
                 android:src="@mipmap/music_pic"
+                app:civ_border_color="#ffffff"
+                app:civ_border_width="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -90,7 +89,7 @@
         android:id="@+id/fullSizeMusicController"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorBG"
+        android:background="@color/lightBGColor2"
         android:visibility="gone">
 
         <View
@@ -108,14 +107,14 @@
 
         <ImageView
             android:id="@+id/albumArtLarge"
-            android:layout_width="250dp"
-            android:layout_height="225dp"
+            android:layout_width="300dp"
+            android:layout_height="275dp"
             android:layout_marginTop="32dp"
             android:background="@android:color/transparent"
-            android:elevation="10dp"
-            android:scaleType="centerInside"
             android:contentDescription="@string/todo"
-            app:layout_constraintBottom_toTopOf="@+id/textView2"
+            android:elevation="10dp"
+            android:scaleType="fitXY"
+            app:layout_constraintBottom_toTopOf="@+id/songNameLarge"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.50"
             app:layout_constraintStart_toStartOf="parent"
@@ -123,15 +122,16 @@
             app:srcCompat="@mipmap/music_pic" />
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/songNameLarge"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginTop="24dp"
             android:layout_marginEnd="32dp"
-            android:fontFamily="@font/karla_font"
+            android:fontFamily="@font/karla_bold"
             android:text="@string/not_playing"
-            android:textSize="18sp"
+            android:gravity="center_horizontal"
+            android:textSize="20sp"
             app:layout_constraintBottom_toTopOf="@+id/timerBar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
@@ -151,7 +151,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView2" />
+            app:layout_constraintTop_toBottomOf="@+id/songNameLarge" />
 
 
         <TextView
@@ -171,7 +171,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="40dp"
             android:fontFamily="@font/karla_font"
-            android:text="02:55"
+            android:text="00:00"
             android:textSize="12sp"
             app:layout_constraintBottom_toTopOf="@+id/lay"
             app:layout_constraintEnd_toEndOf="parent"
@@ -183,7 +183,7 @@
             android:layout_width="0dp"
             android:layout_height="25dp"
             android:layout_marginStart="64dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="32dp"
             android:layout_marginEnd="64dp"
             android:padding="8dp"
             android:progressTint="@color/colorPrimary"
@@ -199,10 +199,12 @@
             android:layout_height="24dp"
             android:layout_gravity="center|left"
             android:layout_marginStart="50dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="32dp"
+            android:contentDescription="@string/todo"
             android:elevation="0dp"
             android:padding="5dp"
             android:src="@drawable/ic_volume_mute_black_24dp"
+            android:tint="@color/musicButtonInactive"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/lay" />
 
@@ -211,11 +213,13 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_gravity="center|left"
-            android:layout_marginTop="9dp"
+            android:layout_marginTop="32dp"
             android:layout_marginEnd="50dp"
+            android:contentDescription="@string/todo"
             android:elevation="0dp"
             android:padding="5dp"
             android:src="@drawable/ic_volume_up_black_24dp"
+            android:tint="@color/musicButtonInactive"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/lay" />
 
@@ -224,24 +228,27 @@
             android:layout_width="match_parent"
             android:layout_height="52dp"
             android:layout_marginStart="64dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="32dp"
             android:layout_marginEnd="64dp"
-            android:weightSum="1"
             android:gravity="center"
             android:orientation="horizontal"
+            android:weightSum="1"
             app:layout_constraintBottom_toTopOf="@+id/volumeBar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/timerBar">
 
             <ImageView
-                android:id="@+id/imageView2"
+                android:id="@+id/previousLarge"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:padding="6dp"
                 android:layout_gravity="center_horizontal|left"
-                android:src="@drawable/ic_fast_rewind_black_24dp"
-                android:tint="@color/colorGrey" />
+                android:clickable="true"
+                android:tint="@color/musicButtonInactive"
+                android:background="@drawable/click_button"
+                android:contentDescription="@string/todo"
+                android:padding="6dp"
+                android:src="@drawable/ic_fast_rewind_black_24dp" />
 
             <ImageView
                 android:id="@+id/playBtnLargeController"
@@ -257,14 +264,16 @@
                 android:src="@drawable/ic_play_circle_filled_black_24dp" />
 
             <ImageView
-                android:id="@+id/imageView4"
+                android:id="@+id/nextLarge"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:padding="6dp"
-                android:contentDescription="@string/todo"
                 android:layout_gravity="center_horizontal|right"
-                android:src="@drawable/ic_fast_forward_black_24dp"
-                android:tint="@color/colorGrey" />
+                android:clickable="true"
+                android:contentDescription="@string/todo"
+                android:padding="6dp"
+                android:tint="@color/musicButtonInactive"
+                android:background="@drawable/click_button"
+                android:src="@drawable/ic_fast_forward_black_24dp" />
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

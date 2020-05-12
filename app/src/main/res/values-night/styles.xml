@@ -6,6 +6,9 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
     </style>
+    <style name="AppThemeFullScreen" parent="AppTheme">
+        <item name="android:windowFullscreen">true</item>
+    </style>
 
     <style name="Widget.MaterialComponents.BottomNavigationView." parent="Widget.Design.BottomNavigationView">
         <item name="fontFamily">@font/karla_font</item>
