@@ -1,12 +1,15 @@
 package com.my.musicplayer;
 
+import android.app.NotificationManager;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.text.TextUtils;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 
 import com.my.musicplayer.BuildConfig;
 
@@ -22,6 +25,21 @@ public class MediaPlayerService extends Service {
         return null;
     }
 
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        NotificationCompat.Builder notification = MusicNotification.CreateNotification(this, "");
+        startForeground(1003, notification.build());
+
+    }
+    void createNotification() {
+//        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+//        notificationManager.notify(1003, notification.build());
+//        Intent serviceIntent = new Intent(this, MediaPlayerService.class);
+//        serviceIntent.setAction(ACTION_PLAY);
+//        startService(serviceIntent);
+
+    }
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null) {

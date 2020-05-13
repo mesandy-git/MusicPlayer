@@ -3,7 +3,7 @@ package com.my.musicplayer;
 import android.app.Activity;
 import android.app.Application;
 import android.app.Application.ActivityLifecycleCallbacks;
-import android.app.Service;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -21,15 +21,14 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.provider.MediaStore;
-import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.NotificationCompat;
 
 import com.google.gson.Gson;
 
@@ -131,9 +130,11 @@ public class Controller extends Application implements ActivityLifecycleCallback
         }
     }
 
+
     void runMusicRefresh() {
+        tempAudioList.clear();
         Handler handler = new Handler();
-        Runnable r = () -> getAllAudioFromDevice();
+        Runnable r = this::getAllAudioFromDevice;
         handler.postDelayed(r, 100);
     }
 
@@ -162,6 +163,11 @@ public class Controller extends Application implements ActivityLifecycleCallback
                     songNameLarge.setText(getLastTrackName());
                     pref.setLastMusicPath(path);
                     setAlbumArt(path);
+//                    Intent in = new Intent(this, MediaPlayerService.class);
+//                    startService(in);
+                    NotificationCompat.Builder notification = MusicNotification.CreateNotification(this, "");
+                    NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                    notificationManager.notify(1003, notification.build());
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -378,7 +384,6 @@ public class Controller extends Application implements ActivityLifecycleCallback
             Log.d("Position", "" + pos + " " + tempAudioList.get(pos).getaName());
         }
     }
-
 
 
 }

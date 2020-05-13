@@ -3,6 +3,7 @@ package com.my.musicplayer;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.media.AudioManager;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -19,7 +21,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -95,9 +96,8 @@ public class MyMainActivity extends AppCompatActivity implements BottomNavigatio
         previousLarge.setOnClickListener(v -> {
             controller.previousTrack();
         });
-        new Handler().postDelayed(this::getPermissions,0);
+        new Handler().postDelayed(this::getPermissions, 0);
     }
-
 
 
     private void bottomSheet() {
@@ -338,6 +338,22 @@ public class MyMainActivity extends AppCompatActivity implements BottomNavigatio
                 pauseMusics();
             }
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mediaPlayer.isPlaying()) {
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        } else
+            super.onBackPressed();
     }
 
     @Override
